@@ -39,7 +39,6 @@ args:
 - `<init_sha1>` = file SHA1 sum
 - `<patch>` = patch file (.p) from OTA zip
 
-```
 after getting system.img or another firmware image
 This is equals of previous functions on PC with this tools:
 ```
