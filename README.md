@@ -64,7 +64,7 @@ after getting system.img and boot.img from firmware
 This is equals of previous functions on PC with this tools:
 ```
 ~$ ./BlockImageUpdate system.img system.transfer.list system.new.dat system.patch.dat
-~$ ./ApplyPatchfn boot.img - 0041a4df844d4b14c0085921d84572f48cc79ff4 33554432 f32a854298814c18b12d56412f6e3a31afc95e42
+~$ ./ApplyPatch boot.img - 0041a4df844d4b14c0085921d84572f48cc79ff4 33554432 f32a854298814c18b12d56412f6e3a31afc95e42
 ```
 scriptpatcher.sh will generate all commands automatically from updater script so run it like:
 ```
