@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@
 
 typedef struct Expr Expr;
 
-typedef struct {
+struct State {
     // Optional pointer to app-specific data; the core of edify never
     // uses this value.
     void* cookie;
@@ -50,17 +50,16 @@ typedef struct {
     CauseCode cause_code = kNoCause;
 
     bool is_retry = false;
-
-} State;
+};
 
 #define VAL_STRING  1  // data will be NULL-terminated; size doesn't count null
 #define VAL_BLOB    2
 
-typedef struct {
+struct Value {
     int type;
     ssize_t size;
     char* data;
-} Value;
+};
 
 typedef Value* (*Function)(const char* name, State* state,
                            int argc, Expr* argv[]);

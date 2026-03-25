@@ -378,24 +378,39 @@ static bool receive_new_data(const unsigned char* data, size_t size, void* cooki
 
 static void* get_new_data(void* cookie) {
     NewThreadInfo* nti = (NewThreadInfo*) cookie;
-    unsigned char* data;
-    //FIXME: Don't extract on RAM !!
     FILE *rm;
-    size_t length;
-
-    rm = fopen(nti->entry, "r");
-    fseek (rm, 0, SEEK_END);
-    length = ftell (rm);
-    fseek (rm, 0, SEEK_SET);
-    data = (unsigned char*)malloc ((length+1)*sizeof(unsigned char));
-
-    if (data)
-    {
-        fread (data, sizeof(unsigned char), length, rm);
+    
+    rm = fopen(nti->entry, "rb");
+    if (!rm) return nullptr;
+    
+    fseek(rm, 0, SEEK_END);
+    size_t total_length = ftell(rm);
+    fseek(rm, 0, SEEK_SET);
+    
+    setvbuf(rm, nullptr, _IOFBF, 256 * 1024);
+    posix_fadvise(fileno(rm), 0, 0, POSIX_FADV_SEQUENTIAL);
+    
+    const size_t CHUNK = 16 * 1024 * 1024;
+    unsigned char* buffer = (unsigned char*)malloc(CHUNK);
+    
+    if (!buffer) {
+        fclose(rm);
+        return nullptr;
     }
-    fclose (rm);
-    receive_new_data(data, length, nti);
-
+    
+    size_t remaining = total_length;
+    while (remaining > 0) {
+        size_t to_read = (remaining > CHUNK) ? CHUNK : remaining;
+        size_t read_bytes = fread(buffer, 1, to_read, rm);
+        
+        if (read_bytes == 0) break;
+        
+        receive_new_data(buffer, read_bytes, nti);
+        remaining -= read_bytes;
+    }
+    
+    free(buffer);
+    fclose(rm);
     return nullptr;
 }
 

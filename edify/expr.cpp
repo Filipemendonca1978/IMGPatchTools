@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -404,9 +404,6 @@ void RegisterBuiltins() {
 //   convenience methods for functions
 // -----------------------------------------------------------------
 
-// Evaluate the expressions in argv, giving 'count' char* (the ... is
-// zero or more char** to put them in).  If any expression evaluates
-// to NULL, free the rest and return -1.  Return 0 on success.
 int ReadArgs(State* state, Expr* argv[], int count, ...) {
     char** args = reinterpret_cast<char**>(malloc(count * sizeof(char*)));
     va_list v;
@@ -430,9 +427,6 @@ int ReadArgs(State* state, Expr* argv[], int count, ...) {
     return 0;
 }
 
-// Evaluate the expressions in argv, giving 'count' Value* (the ... is
-// zero or more Value** to put them in).  If any expression evaluates
-// to NULL, free the rest and return -1.  Return 0 on success.
 int ReadValueArgs(State* state, Expr* argv[], int count, ...) {
     Value** args = reinterpret_cast<Value**>(malloc(count * sizeof(Value*)));
     va_list v;
@@ -456,10 +450,6 @@ int ReadValueArgs(State* state, Expr* argv[], int count, ...) {
     return 0;
 }
 
-// Evaluate the expressions in argv, returning an array of char*
-// results.  If any evaluate to NULL, free the rest and return NULL.
-// The caller is responsible for freeing the returned array and the
-// strings it contains.
 char** ReadVarArgs(State* state, int argc, Expr* argv[]) {
     char** args = (char**)malloc(argc * sizeof(char*));
     int i = 0;
@@ -477,10 +467,6 @@ char** ReadVarArgs(State* state, int argc, Expr* argv[]) {
     return args;
 }
 
-// Evaluate the expressions in argv, returning an array of Value*
-// results.  If any evaluate to NULL, free the rest and return NULL.
-// The caller is responsible for freeing the returned array and the
-// Values it contains.
 Value** ReadValueVarArgs(State* state, int argc, Expr* argv[]) {
     Value** args = (Value**)malloc(argc * sizeof(Value*));
     int i = 0;
@@ -498,16 +484,14 @@ Value** ReadValueVarArgs(State* state, int argc, Expr* argv[]) {
     return args;
 }
 
+__attribute__((format(printf, 2, 0)))
 static void ErrorAbortV(State* state, const char* format, va_list ap) {
     std::string buffer;
     android::base::StringAppendV(&buffer, format, ap);
     free(state->errmsg);
     state->errmsg = strdup(buffer.c_str());
-    return;
 }
 
-// Use printf-style arguments to compose an error message to put into
-// *state.  Returns nullptr.
 Value* ErrorAbort(State* state, const char* format, ...) {
     va_list ap;
     va_start(ap, format);
@@ -517,10 +501,10 @@ Value* ErrorAbort(State* state, const char* format, ...) {
 }
 
 Value* ErrorAbort(State* state, CauseCode cause_code, const char* format, ...) {
-    /*va_list ap;
+    va_list ap;
     va_start(ap, format);
     ErrorAbortV(state, format, ap);
     va_end(ap);
-    state->cause_code = cause_code;*/
+    state->cause_code = cause_code;
     return nullptr;
 }

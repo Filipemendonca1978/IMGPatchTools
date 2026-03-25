@@ -1,4 +1,3 @@
-# Erfan Abdi <erfangplus@gmail.com>
 CC = gcc
 PP = g++
 AR = ar rcv

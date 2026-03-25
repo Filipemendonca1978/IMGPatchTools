@@ -1,4 +1,3 @@
-# Erfan Abdi <erfangplus@gmail.com>
 CC = gcc
 AR = ar rcv
 ifeq ($(windir),)
